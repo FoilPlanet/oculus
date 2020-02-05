@@ -1,0 +1,20 @@
+{
+  "name": "minicap-foilplanet-server",
+  "private": true,
+  "version": "0.1.1",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "install": "cd vendor && npm install",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "mout": "^1.0.0",
+    "stream-split": "^1.1.0",
+    "stream-throttle": "^0.1.3",
+    "express": "4.17.1",
+    "ws": "7.2.0"
+  },
+  "devDependencies": {}
+}
