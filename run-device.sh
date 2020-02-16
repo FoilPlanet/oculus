@@ -1,17 +1,30 @@
 #!/bin/bash
 
-SOURCE=minicap/x86_64/
+DIST=minicap
 TARGET=/data/local/tmp
+ANDROID_ABI=x86_64
+
 PROJECTION=800x600@800x600/0
 FRATES=30
 # CODING=jpeg
 CODING=${1:-avc}
+SOCKFD="-f 0"
 
 case $1 in
+  pull)
+    echo "Pulling programs from source tree..."
+    cp -av ../minicap/libs/x86_64/minicap      $DIST/x86_64
+    cp -av ../minicap/libs/x86_64/libmpp.so    $DIST/x86_64
+   #cp -av ../minicap/libs/x86_64/libvpu.so    $DIST/x86_64
+    cp -av ../minicap/libs/arm64-v8a/minicap   $DIST/arm64-v8a
+    cp -av ../minicap/libs/arm64-v8a/libmpp.so $DIST/arm64-v8a
+   #cp -av ../minicap/libs/arm64-v8a/libvpu.so $DIST/arm64-v8a
+    ;;
   push)
-    adb push $SOURCE/minicap    $TARGET
-    adb push $SOURCE/libmpp.so  $TARGET
-   #adb push $SOURCE/libvpu.so  $TARGET
+    echo "Pushing programs to device..."
+    adb push $DIST/${ANDROID_ABI}/minicap    $TARGET
+    adb push $DIST/${ANDROID_ABI}/libmpp.so  $TARGET
+   #adb push $DIST/${ANDROID_ABI}/libvpu.so  $TARGET
     ;;
   *)
     # screensaver
@@ -23,7 +36,7 @@ case $1 in
     adb shell input tap 600 20
     adb shell input tap 400 560
     # run minicap
-    adb shell LD_LIBRARY_PATH=$TARGET $TARGET/minicap -P $PROJECTION -r $FRATES -C $CODING
+    adb shell LD_LIBRARY_PATH=$TARGET $TARGET/minicap -P $PROJECTION -r $FRATES -C $CODING $SOCKFD
     ;;
 esac
 
