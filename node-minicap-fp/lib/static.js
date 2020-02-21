@@ -31,7 +31,4 @@ class StaticFeed extends Server {
 
 }
 
-
-
-
 module.exports = StaticFeed;

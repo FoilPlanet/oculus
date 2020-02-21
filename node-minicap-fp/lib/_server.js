@@ -1,9 +1,9 @@
 "use strict";
 
-
 const WebSocketServer = require('ws').Server;
 const Splitter        = require('stream-split');
 const merge           = require('mout/object/merge');
+const fs              = require("fs");
 
 const NALseparator    = new Buffer([0,0,0,1]);//NAL break
 
@@ -32,10 +32,18 @@ class _Server {
 
     readStream = readStream.pipe(new Splitter(NALseparator));
     readStream.on("data", this.broadcast);
+
+    if (this.options.output_path) {
+      var writerStream = fs.createWriteStream(this.options.output_path);
+      this.writerStream = writerStream;
+    }
   }
 
   stop_feed() {
     this.readStream.pause();
+    if (this.writerStream) {
+      this.writerStream.end();
+    }
   }
 
   get_feed() {
@@ -43,6 +51,8 @@ class _Server {
   }
 
   broadcast(data) {
+    var frame = Buffer.concat([NALseparator, data]);
+
     this.wss.clients.forEach(function(socket) {
 
       if(socket.buzy)
@@ -51,10 +61,15 @@ class _Server {
       socket.buzy = true;
     //socket.buzy = false;
 
-      socket.send(Buffer.concat([NALseparator, data]), { binary: true}, function ack(error) {
+      socket.send(frame, { binary: true }, function ack(error) {
         socket.buzy = false;
       });
     });
+    
+    // dump to file / write stream
+    if (this.writerStream) {
+      this.writerStream.write(frame);
+    }
   }
 
   new_client(socket, req) {

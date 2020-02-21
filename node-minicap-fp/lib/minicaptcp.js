@@ -184,12 +184,13 @@ class MinicapTCPFeed extends Server {
               // Sanity check for JPG header, only here for debugging purposes.
               if (frameBody[0] !== 0xFF || frameBody[1] !== 0xD8) {
                 broadcast_stream(frameBody) // avc/h.264 stream
+                console.debug("t-%s", frameBody[0].toString(16)); // frame type
               } else {
                 broadcast_frame(frameBody)  // jpeg image
+                console.debug(".");
               }
   
               cursor += frameBodyLength
-              console.info(".");
               frameBodyLength = readFrameBytes = 0
               frameBody = new Buffer(0)
             }

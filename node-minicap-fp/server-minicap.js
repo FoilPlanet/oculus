@@ -33,15 +33,24 @@ app.use(express.static(__dirname + '/public'));
 app.use(express.static(__dirname + '/vendor/dist'));
 
 const server  = http.createServer(app);
-const http_port = 9002
+const http_port = 9002;
+
+var args = process.argv.slice(2);
+var port = 1717;
+
+if (args[0]) {
+  port = args[0];
+}
 
 const feed    = new RemoteTCPFeedRelay(server, {
   feed_ip:   "127.0.0.1",
-  feed_port: 1717,
+  feed_port: port,
   width:     800,
-  height:    600
+  height:    600,
+  output_path: "samples/out.h264"
 });
 
 server.listen(http_port);
+console.info('Connect feed port %d', port);
 console.info('Listening on port %d', http_port)
 
