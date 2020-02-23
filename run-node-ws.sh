@@ -1,4 +1,7 @@
 #!/bin/sh
+# usage run-node-ws.sh {minicap-tcp-port}
+
+MYPATH=$(realpath $(dirname $0))
 
 SOCK_NAME=minicap
 TCP_PORT=${1:-1717}
@@ -13,4 +16,4 @@ case $TCP_PORT in
     ;;
 esac
 
-cd node-minicap-fp && node server-minicap.js $TCP_PORT
+cd $MYPATH/node-minicap-fp && node server-minicap.js $TCP_PORT
